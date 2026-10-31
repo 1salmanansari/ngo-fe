@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
-const rawApiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1';
+const rawApiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const apiBase = rawApiUrl.replace(/\/+$/, '');
 
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   swcMinify: true,
   transpilePackages: ['@mui/material', '@mui/icons-material'],
