@@ -81,7 +81,7 @@ jobs:
           BUCKET="__BUCKET__"
           RELEASE_DIR="$APP_DIR/releases/$RELEASE_ID"
           ARCHIVE="/tmp/ngo-fe-$RELEASE_ID.tar.gz"
-          PREVIOUS_TARGET="$(readlink -f "$APP_DIR/current" 2>/dev/null || true)"
+          PREVIOUS_TARGET="$(readlink "$APP_DIR/current" 2>/dev/null || true)"
 
           mkdir -p "$APP_DIR/releases"
           aws s3 cp "s3://$BUCKET/releases/$RELEASE_ID.tar.gz" "$ARCHIVE"
@@ -109,12 +109,12 @@ jobs:
           PM2
 
           chown -R ec2-user:ec2-user "$APP_DIR"
-          ln -sfn "$RELEASE_DIR" "$APP_DIR/current"
+          ln -sfnT "$RELEASE_DIR" "$APP_DIR/current"
           chown -h ec2-user:ec2-user "$APP_DIR/current"
 
           if ! sudo -iu ec2-user pm2 startOrRestart "$APP_DIR/ecosystem.config.cjs" --update-env; then
             if [ -n "$PREVIOUS_TARGET" ] && [ -d "$PREVIOUS_TARGET" ]; then
-              ln -sfn "$PREVIOUS_TARGET" "$APP_DIR/current"
+              ln -sfnT "$PREVIOUS_TARGET" "$APP_DIR/current"
               chown -h ec2-user:ec2-user "$APP_DIR/current"
               sudo -iu ec2-user pm2 startOrRestart "$APP_DIR/ecosystem.config.cjs" --update-env || true
             fi
@@ -125,7 +125,7 @@ jobs:
           if ! curl --fail --silent --show-error http://127.0.0.1:3000/ >/dev/null; then
             echo "Health check failed; rolling back."
             if [ -n "$PREVIOUS_TARGET" ] && [ -d "$PREVIOUS_TARGET" ]; then
-              ln -sfn "$PREVIOUS_TARGET" "$APP_DIR/current"
+              ln -sfnT "$PREVIOUS_TARGET" "$APP_DIR/current"
               chown -h ec2-user:ec2-user "$APP_DIR/current"
               sudo -iu ec2-user pm2 startOrRestart "$APP_DIR/ecosystem.config.cjs" --update-env || true
             fi
