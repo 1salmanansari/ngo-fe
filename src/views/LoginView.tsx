@@ -227,7 +227,7 @@ export const LoginView: React.FC = () => {
             }}
           >
             <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
-              Default Camp Credentials:
+              Default Admin Credentials:
             </Typography>
             <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.primary' }}>
               Username: <code>admin</code> • Password: <code>admin</code>
